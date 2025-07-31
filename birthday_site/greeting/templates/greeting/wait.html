@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Подарок скоро</title>
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #fcefee, #f6d1e6);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #5a3e6e;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    background: #fff0f6;
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(234, 185, 211, 0.5);
+    text-align: center;
+    max-width: 350px;
+  }
+  h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #a45cae;
+  }
+  p {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #7e5684;
+  }
+  #timer {
+    margin-top: 25px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #d86d9f;
+    letter-spacing: 1.5px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎁 Подарок скоро!</h1>
+    <p>Твоё день рождения ещё не наступил.<br>Осталось времени до праздника:</p>
+    <div id="timer">Загрузка...</div>
+    <p style="margin-top: 30px; font-size: 16px; color: #a67fb3;">
+      Загляни сюда 4 августа
+    </p>
+  </div>
+
+<script>
+  const birthday = new Date("2025-08-04T00:00:00").getTime();
+
+  function updateTimer() {
+    const now = new Date().getTime();
+    const distance = birthday - now;
+
+    if (distance < 0) {
+      document.getElementById("timer").innerHTML = "🎉 Сегодня праздник! Обнови страницу!";
+      clearInterval(timerInterval);
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("timer").innerHTML =
+      days + " дн " + hours + " ч " + minutes + " мин " + seconds + " сек";
+  }
+
+  updateTimer();
+  const timerInterval = setInterval(updateTimer, 1000);
+</script>
+</body>
+</html>
