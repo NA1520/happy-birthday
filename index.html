@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>С Днём Рождения, Айбийке!</title>
+<style>
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); color: #d86d9f; }
+    50% { transform: scale(1.1); color: #bf5886; }
+  }
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25%, 75% { transform: scale(1.1); }
+    50% { transform: scale(0.9); }
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  }
+  body, html {
+    margin: 0; padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fcefee, #f6d1e6);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #5a3e6e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: bgColorShift 20s infinite alternate;
+  }
+  @keyframes bgColorShift {
+    0% { background: #fcefee; }
+    25% { background: #f8d3e0; }
+    50% { background: #f6c1db; }
+    75% { background: #f7b6ce; }
+    100% { background: #f6d1e6; }
+  }
+  .container {
+    position: relative;
+    z-index: 10;
+    background: #fff0f6;
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(234, 185, 211, 0.5);
+    text-align: center;
+    max-width: 400px;
+    animation: fadeInScale 1.5s ease forwards;
+    opacity: 0;
+  }
+  h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: #d86d9f;
+    animation: pulse 2s infinite;
+    min-height: 40px;
+  }
+  p {
+    font-size: 18px;
+    margin-top: 15px;
+    color: #7e5684;
+    line-height: 1.5;
+  }
+  button {
+    margin-top: 25px;
+    padding: 12px 24px;
+    font-size: 18px;
+    color: white;
+    background-color: #d86d9f;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(216, 109, 159, 0.6);
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+    animation: heartbeat 3s infinite;
+  }
+  button:hover {
+    background-color: #bf5886;
+  }
+  #surprise {
+    margin-top: 25px;
+    font-size: 20px;
+    color: #d86d9f;
+    opacity: 0;
+    transition: opacity 1.5s ease, color 1.5s ease;
+    min-height: 24px;
+  }
+  #surprise.show {
+    opacity: 1;
+    color: #a45cae;
+  }
+  #starsCanvas, #confettiContainer, #sparkCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5;
+  }
+  #confettiContainer {
+    overflow: visible;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starsCanvas"></canvas>
+<canvas id="sparkCanvas"></canvas>
+<div id="confettiContainer"></div>
+
+<div class="container" id="mainContainer">
+  <h1 id="typedText"></h1>
+
+  <p>
+    Сегодня особенный день — мир стал ярче, ведь в нём появилась ты 💖
+  </p>
+
+  <p>
+    Пусть каждый миг будет наполнен светом, теплом и вдохновением.<br>
+    Желаю крепкого здоровья, искренней любви и безграничного счастья 🌸
+  </p>
+
+  <p>📅 Сегодня: {{ today }}</p>
+  <p>Пусть этот день подарит море улыбок и радости! 😊</p>
+
+  <button id="playBtn">Включить музыку 🎵</button>
+  <button id="pauseBtn" style="display:none;">Выключить музыку 🔇</button>
+
+  <button id="surpriseBtn">Показать сюрприз 🎁</button>
+  <div id="surprise"></div>
+
+  <audio id="birthdayAudio" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg" />
+    Ваш браузер не поддерживает аудио.
+  </audio>
+</div>
+
+<script>
+  // Переменные для typed text
+  const typedTextEl = document.getElementById('typedText');
+  const surpriseEl = document.getElementById('surprise');
+  const surpriseBtn = document.getElementById('surpriseBtn');
+
+  // Текст для печатающегося эффекта
+  const typedMessage = "🎉 Дорогая Айбийке! Ты — лучшая подруга! Спасибо, что ты есть! ❤️";
+
+  let charIndex = 0;
+  function typeText() {
+    if (charIndex < typedMessage.length) {
+      typedTextEl.textContent += typedMessage.charAt(charIndex);
+      charIndex++;
+      setTimeout(typeText, 60);
+    }
+  }
+  typeText();
+
+  // Музыка
+  const playBtn = document.getElementById('playBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const audio = document.getElementById('birthdayAudio');
+
+  playBtn.addEventListener('click', () => {
+    audio.play();
+    playBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-block';
+  });
+  pauseBtn.addEventListener('click', () => {
+    audio.pause();
+    pauseBtn.style.display = 'none';
+    playBtn.style.display = 'inline-block';
+  });
+
+  // Функция для создания конфетти
+  function createConfetti() {
+    const confettiContainer = document.getElementById('confettiContainer');
+    const colors = ['#d86d9f','#bf5886','#f7b6ce','#f6c1db','#a45cae'];
+    const count = 100;
+
+    for(let i=0; i<count; i++){
+      const confetti = document.createElement('div');
+      confetti.style.position = 'absolute';
+      confetti.style.width = '8px';
+      confetti.style.height = '8px';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+      confetti.style.top = '-10px';
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.opacity = Math.random();
+      confetti.style.borderRadius = '2px';
+      confetti.style.transform = `rotate(${Math.random()*360}deg)`;
+      confetti.style.animation = `confettiFall ${2 + Math.random()*3}s linear forwards`;
+      confetti.style.animationDelay = `${Math.random()*2}s`;
+
+      confettiContainer.appendChild(confetti);
+
+      // Удаляем конфетти после анимации
+      confetti.addEventListener('animationend', () => confetti.remove());
+    }
+  }
+
+  // Звук колокольчика
+  const bellSound = new Audio('https://actions.google.com/sounds/v1/alarms/bell_ring.ogg');
+
+  // Искры при клике
+  const sparkCanvas = document.getElementById('sparkCanvas');
+  const sparkCtx = sparkCanvas.getContext('2d');
+  let sparkW, sparkH;
+  function resizeSparks() {
+    sparkW = window.innerWidth;
+    sparkH = window.innerHeight;
+    sparkCanvas.width = sparkW;
+    sparkCanvas.height = sparkH;
+  }
+  resizeSparks();
+  window.addEventListener('resize', resizeSparks);
+
+  class Spark {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.radius = 1 + Math.random() * 3;
+      this.speedX = (Math.random() - 0.5) * 4;
+      this.speedY = (Math.random() - 0.5) * 4;
+      this.alpha = 1;
+      this.decay = 0.02 + Math.random() * 0.03;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.alpha -= this.decay;
+      if(this.alpha < 0) this.alpha = 0;
+    }
+    draw() {
+      sparkCtx.beginPath();
+      sparkCtx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      sparkCtx.fillStyle = `rgba(216, 109, 159, ${this.alpha})`;
+      sparkCtx.shadowColor = `rgba(216, 109, 159, ${this.alpha})`;
+      sparkCtx.shadowBlur = 10;
+      sparkCtx.fill();
+    }
+  }
+
+  let sparks = [];
+  function animateSparks() {
+    sparkCtx.clearRect(0, 0, sparkW, sparkH);
+    sparks.forEach((spark, i) => {
+      spark.update();
+      spark.draw();
+      if(spark.alpha <= 0){
+        sparks.splice(i, 1);
+      }
+    });
+    requestAnimationFrame(animateSparks);
+  }
+  animateSparks();
+
+  window.addEventListener('click', e => {
+    // Создаем искры на позиции клика
+    for(let i=0; i<15; i++){
+      sparks.push(new Spark(e.clientX, e.clientY));
+    }
+  });
+
+  // Звёздочки падающие (анимация на canvas)
+  const starsCanvas = document.getElementById('starsCanvas');
+  const ctx = starsCanvas.getContext('2d');
+  let W, H;
+  function resizeStars() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    starsCanvas.width = W;
+    starsCanvas.height = H;
+  }
+  resizeStars();
+  window.addEventListener('resize', resizeStars);
+
+  class Star {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H - H;
+      this.size = 5 + Math.random() * 7;
+      this.speedY = 1 + Math.random() * 2;
+      this.speedX = (Math.random() - 0.5) * 1.5;
+      this.opacity = 0.6 + Math.random() * 0.4;
+      this.angle = Math.random() * 2 * Math.PI;
+      this.angleSpeed = 0.02 * (Math.random() < 0.5 ? 1 : -1);
+      this.pulseSpeed = 0.04 + Math.random() * 0.04;
+      this.pulseDir = 1;
+    }
+    update() {
+      this.y += this.speedY;
+      this.x += this.speedX + Math.sin(this.angle);
+      this.angle += this.angleSpeed;
+
+      // Пульсация размера
+      this.size += this.pulseDir * this.pulseSpeed;
+      if(this.size > 12) this.pulseDir = -1;
+      if(this.size < 5) this.pulseDir = 1;
+
+      if (this.y > H) {
+        this.reset();
+        this.y = -this.size;
+      }
+      if (this.x > W) this.x = 0;
+      if (this.x < 0) this.x = W;
+    }
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+      ctx.fillStyle = `rgba(216, 109, 159, ${this.opacity})`;
+      ctx.beginPath();
+
+      const spikes = 5;
+      const outerRadius = this.size;
+      const innerRadius = this.size / 2;
+      let rot = Math.PI / 2 * 3;
+      let step = Math.PI / spikes;
+
+      ctx.moveTo(0, -outerRadius);
+      for(let i = 0; i < spikes; i++) {
+        let x = Math.cos(rot) * outerRadius;
+        let y = Math.sin(rot) * outerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+
+        x = Math.cos(rot) * innerRadius;
+        y = Math.sin(rot) * innerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  let stars = [];
+  let starsAnimating = false;
+
+  function launchStars() {
+    if (starsAnimating) return;
+    starsAnimating = true;
+    stars = [];
+    for(let i = 0; i < 40; i++) {
+      stars.push(new Star());
+    }
+    animateStars();
+  }
+
+  function animateStars() {
+    ctx.clearRect(0, 0, W, H);
+    for(const star of stars) {
+      star.update();
+      star.draw();
+    }
+    if(starsAnimating) requestAnimationFrame(animateStars);
+  }
+
+  // Кнопка сюрприза — запускает звёздочки, конфетти и звук
+  surpriseBtn.addEventListener('click', () => {
+    surpriseEl.textContent = "Ты — лучшая подруга! Спасибо, что ты есть! ❤️";
+    surpriseEl.classList.add('show');
+    surpriseBtn.disabled = true;
+    launchStars();
+    createConfetti();
+    bellSound.play();
+  });
+</script>
+
+</body>
+</html>
